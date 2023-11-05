@@ -2,6 +2,7 @@ import imageio
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+from PIL import Image
 
 file_path = sys.argv[1]
 
@@ -9,7 +10,7 @@ frames = np.load(file_path)
 
 image_frames = []
 plt.ion()
-fig = plt.figure(figsize=(7, 7))
+fig = plt.figure()
 ax = plt.axes(projection='3d')
 for i in range(len(frames)):
     ax.set_xlim(-20, 20)
@@ -20,13 +21,14 @@ for i in range(len(frames)):
     ax.set_title(f'frame {i}')
     fig.canvas.draw()
     image = np.array(fig.canvas.buffer_rgba())
+    image = np.array(Image.fromarray(image).resize((800, 600)))
     image_frames.append(image)
     plt.pause(0.01)
     ax.clear()
 plt.ioff()
 
 output_file = 'simulation.mp4'
-writer = imageio.get_writer(output_file, fps=30, macro_block_size=None)
+writer = imageio.get_writer(output_file, fps=30, macro_block_size=None, format='MP4')
 
 for i in range(len(image_frames)):
     writer.append_data(image_frames[i])
