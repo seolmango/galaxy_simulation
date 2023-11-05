@@ -10,7 +10,7 @@ frames = np.load(file_path)
 
 image_frames = []
 plt.ion()
-fig = plt.figure()
+fig = plt.figure(figsize=(12, 8))
 ax = plt.axes(projection='3d')
 for i in range(len(frames)):
     ax.set_xlim(-20, 20)
@@ -21,7 +21,7 @@ for i in range(len(frames)):
     ax.set_title(f'frame {i}')
     fig.canvas.draw()
     image = np.array(fig.canvas.buffer_rgba())
-    image = np.array(Image.fromarray(image).resize((800, 600)))
+    image = np.array(Image.fromarray(image).resize((1080, 720)))
     image_frames.append(image)
     plt.pause(0.01)
     ax.clear()
