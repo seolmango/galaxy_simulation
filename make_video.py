@@ -9,7 +9,7 @@ frames = np.load(file_path)
 
 image_frames = []
 plt.ion()
-fig = plt.figure()
+fig = plt.figure(figsize=(7, 7))
 ax = plt.axes(projection='3d')
 for i in range(len(frames)):
     ax.set_xlim(-20, 20)
@@ -19,14 +19,14 @@ for i in range(len(frames)):
     ax.scatter3D(frames[i][1][0,:], frames[i][1][1,:], frames[i][1][2,:],s=1, c='r')
     ax.set_title(f'frame {i}')
     fig.canvas.draw()
-    image = np.array(fig.canvas.buffer_rgba(), dtype='uint8')
+    image = np.array(fig.canvas.buffer_rgba())
     image_frames.append(image)
     plt.pause(0.01)
     ax.clear()
 plt.ioff()
 
 output_file = 'simulation.mp4'
-writer = imageio.get_writer(output_file, fps=30)
+writer = imageio.get_writer(output_file, fps=30, macro_block_size=None)
 
 for i in range(len(image_frames)):
     writer.append_data(image_frames[i])
