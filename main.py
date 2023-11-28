@@ -2,7 +2,7 @@ from Galaxy import Galaxy
 from StarGalaxy import StarGalaxy
 from Orbit import Orbit
 import numpy as np
-import matplotlib.pyplot as plt
+import tqdm
 
 
 class Sim:
@@ -46,22 +46,12 @@ class Sim:
     def RunSim(self):
         frames = []
         dt = 0.04
-        t = 0.0
-        tmax = 60
+        max_frame = int(input("최대 프레임 수 > "))
+        tmax = max_frame * dt
         self.galaxy.InitStars()
         self.companion.InitStars()
-        plt.ion()
-        fig = plt.figure()
-        ax = plt.axes(projection='3d')
-        ax.set_xlim(-20, 20)
-        ax.set_ylim(-20, 20)
-        ax.set_zlim(-20, 20)
-        ax.scatter3D(self.galaxy.starpos[0,:], self.galaxy.starpos[1,:], self.galaxy.starpos[2,:], s=1, c='b')
-        ax.scatter3D(self.companion.starpos[0,:], self.companion.starpos[1,:], self.companion.starpos[2,:],s=1, c='r')
-        ax.set_title('t = ' + str(t))
         frames.append([self.galaxy.starpos, self.companion.starpos])
-        plt.pause(0.01)
-        while t < tmax:
+        for t in tqdm.tqdm(np.arange(0, tmax, dt), desc="진행도"):
             dist = 3.5 * np.linalg.norm((self.galaxy.galpos - self.companion.galpos))
             self.galaxy.galacc = self.companion.Acceleration(self.galaxy.galpos)
             self.companion.galacc = self.galaxy.Acceleration(self.companion.galpos)
@@ -81,16 +71,6 @@ class Sim:
             self.galaxy.MoveGalaxy(dt)
             self.companion.MoveGalaxy(dt)
             frames.append([self.galaxy.starpos, self.companion.starpos])
-            ax.clear()
-            ax.set_xlim(-20, 20)
-            ax.set_ylim(-20, 20)
-            ax.set_zlim(-20, 20)
-            ax.scatter3D(self.galaxy.starpos[0,:], self.galaxy.starpos[1,:], self.galaxy.starpos[2,:], s=1, c='b')
-            ax.scatter3D(self.companion.starpos[0,:], self.companion.starpos[1,:], self.companion.starpos[2,:], s=1, c='r')
-            ax.set_title('t = ' + str(t))
-            plt.pause(0.01)
-            t += dt
-        plt.ioff()
         return frames
 
 if __name__ == '__main__':
@@ -98,5 +78,5 @@ if __name__ == '__main__':
     sim.MakeGalaxy()
     sim.MakeOrbit()
     frames = sim.RunSim()
-    frames = np.array(frames)
+    frames = np.array(frames[:-1])
     np.save('simulation.npy', frames)

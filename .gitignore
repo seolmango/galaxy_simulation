@@ -1,3 +1,5 @@
 venv
 simulation.*
 .idea
+*.mp4
+*.npy
